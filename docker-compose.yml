@@ -1,0 +1,39 @@
+version: "3.9"
+services:
+  postgres:
+    image: postgres:16
+    container_name: postgres
+    restart: always
+    environment:
+      POSTGRES_USER: che
+      POSTGRES_PASSWORD: 2011
+      POSTGRES_DB: gaslog
+    volumes:
+      - /mnt/titan/db/gaslog:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: che.dev247@gmail.com
+      PGADMIN_DEFAULT_PASSWORD: 2011
+    ports:
+      - "5050:80"
+    depends_on:
+      - postgres
+
+  backend:
+    build: 
+      context: .
+      dockerfile: ./backend/Dockerfile
+    container_name: backend
+    restart: always
+    environment:
+      DATABASE_URL: postgresql://che:2011@postgres:5432/gaslog
+    ports:
+      - "5000:5000"
+    depends_on:
+      - postgres
