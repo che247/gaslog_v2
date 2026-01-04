@@ -14,7 +14,7 @@ import TableRow from "@mui/material/TableRow";
 import TextField from "@mui/material/TextField";
 import axios from "axios";
 import { useEffect, useMemo, useState } from "react";
-import { Graph } from "../components/Graph/component.graph.jsx";
+import { Graph } from "../../components/Graph/component.graph.jsx";
 import "./Home.css";
 import { Close, Edit } from "@mui/icons-material";
 import {
@@ -252,114 +252,7 @@ export default function Home() {
       <div id="title">
         <h1>Gas Log</h1>
       </div>
-      <form className="form_elements">
-        <div className="form">
-          <TextField
-            variant="outlined"
-            type="date"
-            id="date"
-            name="date"
-            value={date}
-            defaultValue={date}
-            onChange={(e) => {
-              setDate(e.target.value);
-            }}
-            slotProps={{
-              input: {
-                startAdornment: (
-                  <InputAdornment position="end">
-                    <CalendarMonth />
-                  </InputAdornment>
-                ),
-              },
-            }}
-          />
-        </div>
-        <div className="form">
-          <TextField
-            label="Odometer"
-            type="number"
-            id="odometer"
-            name="odometer"
-            value={form.odometer}
-            onChange={(e) => {
-              setForm((prev) => ({
-                ...prev,
-                odometer: Number(e.target.value),
-              }));
-            }}
-          />
-        </div>
-        <div className="form">
-          <TextField
-            label="Price"
-            type="number"
-            id="price"
-            name="price"
-            value={form.price}
-            onChange={(e) => {
-              setForm((prev) => ({ ...prev, price: Number(e.target.value) }));
-            }}
-          />
-        </div>
-        <div className="form">
-          <TextField
-            label="Gallons"
-            type="number"
-            id="gallons"
-            name="gallons"
-            value={form.gallons}
-            onChange={(e) => {
-              setForm((prev) => ({ ...prev, gallons: Number(e.target.value) }));
-            }}
-          />
-        </div>
-        <div className="form">
-          <Autocomplete
-            freeSolo
-            label="Gas Station"
-            disablePortal
-            options={gasStations}
-            inputValue={inputGasStationValue}
-            onInputChange={(event, newValue) => {
-              setInputGasStationValue(newValue);
-            }}
-            value={form.gas_station}
-            onChange={(event, newValue) => {
-              if (typeof newValue === "string") {
-                const cleaned = newValue.trim().toLowerCase();
-                if (cleaned && !gasStations.some((g) => g.toLowerCase() === cleaned)) {
-                  console.log("Setting the custom gas station to: ", cleaned);
-                  setCustomGasStation(cleaned);
-                  setToggleOpen(true);
-                } else {
-                  setForm((prev) => ({ ...prev, gas_station: cleaned }));
-                }
-              }
-            }}
-            filterOptions={(options, params) => {
-              const filtered = filter(options, params);
-              const value = params.inputValue.trim();
-              const exists = options.some((option) => option.toLowerCase() === value.toLowerCase());
-              if (value && !exists) {
-                filtered.push(`Add ${value}?`);
-              }
-              return filtered;
-            }}
-            renderInput={(params) => <TextField {...params} label="Gas Station" />}
-          />
-        </div>
-      </form>
-      <div style={{ textAlign: "right", marginTop: "1rem" }}>
-        <Button
-          variant="contained"
-          onClick={uploadLog}
-          disabled={Object.values(form).some((value) => value === "" || value == null)}
-        >
-          Submit
-        </Button>
-      </div>
-      <div style={{ marginTop: "2rem", margin: "2rem auto 0" }}>
+      <div style={{ marginTop: "2rem"}}>
         <h2 style={{ textAlign: "left" }}>Previous Fuel Records</h2>
         <TableContainer className="table">
           <Table>
@@ -420,7 +313,14 @@ export default function Home() {
             All Logs Have Been Displayed
           </Button>
         )}
-        <Graph type="line" />
+        <div 
+        style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}>
+          <Graph type="line" />
+        </div>
       </div>
       <Dialog open={toggleOpen} onClose={handleNewGasStationClose}>
         <DialogTitle>

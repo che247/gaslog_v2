@@ -1,0 +1,22 @@
+@media (max-width: 768px) {
+    .container {
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+    }
+}
+
+.overview {
+    text-align: left;
+    font-size: 1.25rem;
+}
+
+.registration {
+}
+
+.form {
+    background-color: coral;
+    border-radius: 8px;
+    margin: 0.5rem;
+    padding: 1.5rem;
+}

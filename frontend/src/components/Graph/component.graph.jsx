@@ -79,7 +79,7 @@ export const Graph = ({ type }) => {
       data={traces()}
       layout={{ title: { text: "Total Cost Over Time" } }}
       useResizeHandler
-      style={{ width: "70vw" }}
+      style={{ width: "100%" }}
       config={{ responsive: true }}
     />
   );
