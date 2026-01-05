@@ -5,6 +5,9 @@ WORKDIR /frontend
 COPY frontend/package*.json ./
 RUN npm install
 COPY frontend/ .
+
+ENV VITE_API_PROXY=http://localhost:5000
+
 RUN npm run build
 
 # Stage 2: Backend setup

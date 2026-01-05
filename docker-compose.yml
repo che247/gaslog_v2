@@ -33,6 +33,7 @@ services:
     restart: always
     environment:
       DATABASE_URL: postgresql://che:2011@postgres:5432/gaslog
+
     ports:
       - "5000:5000"
     depends_on:

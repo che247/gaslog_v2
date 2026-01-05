@@ -12,7 +12,10 @@ export default defineConfig({
       // // Production
       // "/api": "http://localhost:5000"
       // Development
-      "/api": "http://localhost:4321"
+      // "/api": "http://localhost:4321"
+      "/api": {
+        target: process.env.VITE_API_PROXY || "http://localhost:4321",
+      }
     }
   }
 })
