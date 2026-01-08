@@ -4,6 +4,9 @@
         align-items: center;
         width: 100%;
     }
+    .form {
+        min-width: 70vw;
+    }
 }
 
 .overview {
@@ -19,4 +22,5 @@
     border-radius: 8px;
     margin: 0.5rem;
     padding: 1.5rem;
+    transition: min-width 300ms;
 }
