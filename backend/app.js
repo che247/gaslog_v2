@@ -1,21 +1,32 @@
-import { PrismaClient } from "@prisma/client";
+import { toNodeHandler } from "better-auth/node";
 import cookieParser from "cookie-parser";
 import cors from "cors";
+import dotenv from "dotenv";
 import express from "express";
 import logger from "morgan";
 import path, { dirname, join } from "path";
-import { pagination } from "prisma-extension-pagination";
 import { fileURLToPath } from "url";
+import { auth } from "./utils/auth.js";
+import prisma from "./utils/prisma.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 import indexRouter from "./routes/index.js";
 import usersRouter from "./routes/users.js";
+import { auth } from "./utils/auth.js";
 
-const prisma = new PrismaClient().$extends(pagination());
+// Let's setup the better-auth instance here
+dotenv.config({
+  path: ".env",
+});
+
 const PORT = process.env.PORT || 5000;
 const app = express();
+
+// For better-auth tings
+const BETTER_AUTH_URL = `${process.env.BETTER_AUTH_URL}:${PORT}`;
+app.all("/api/auth/*", toNodeHandler(auth));
 
 app.use(cors());
 app.use(logger("dev"));
@@ -33,7 +44,7 @@ app.get("/api/logs", async (req, res) => {
   console.log("Got the req parameters: ", req.query);
   const after = req.query.afterID ? String(req.query.afterID) : 0;
   try {
-    const [logs, meta] = await prisma.fuel_log.paginate({ orderBy: { date: "desc" } }).withCursor({
+    const [logs, meta] = await prisma.fuel_logs.paginate({ orderBy: { date: "desc" } }).withCursor({
       limit,
       after,
     });
@@ -46,7 +57,7 @@ app.get("/api/logs", async (req, res) => {
 
 app.get("/api/allLogs", async (req, res) => {
   try {
-    const allLogs = await prisma.fuel_log.findMany({
+    const allLogs = await prisma.fuel_logs.findMany({
       orderBy: { date: "desc" },
     });
     res.status(200).json(allLogs);
@@ -58,7 +69,7 @@ app.get("/api/allLogs", async (req, res) => {
 
 app.get("/api/gasStations", async (req, res) => {
   try {
-    const gasStations = await prisma.fuel_log.findMany({
+    const gasStations = await prisma.fuel_logs.findMany({
       distinct: ["gas_station"],
       where: {
         NOT: {
@@ -90,7 +101,7 @@ app.post("/api/log", async (req, res) => {
     price_per_gallon,
   };
   try {
-    await prisma.fuel_log.create({
+    await prisma.fuel_logs.create({
       data: data,
     });
     res.status(200).json({ msg: "Log succesfully uploaded to database." });
@@ -107,7 +118,7 @@ app.delete("/api/logs/:id", async (req, res) => {
   console.log("Attempting to delete it from database...");
 
   try {
-    await prisma.fuel_log.delete({
+    await prisma.fuel_logs.delete({
       where: {
         id: Number(id),
       },
@@ -128,11 +139,11 @@ app.patch("/api/logs/:id", async (req, res) => {
   const data = {
     ...rest,
     ...(date_display ? { date: new Date(date_display) } : {}),
-    ...(price ? {total_cost: Number(price)} : {})
+    ...(price ? { total_cost: Number(price) } : {}),
   };
 
   try {
-    const updated = await prisma.fuel_log.update({
+    const updated = await prisma.fuel_logs.update({
       where: { id },
       data,
     });
